@@ -1,0 +1,16 @@
+name: Checks
+on: [push, pull_request]
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    env:
+      POSTGRES_PASSWORD: ci-only-password
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose build
+      - run: docker compose run --rm --no-deps api ruff check .
+      - run: docker compose run --rm --no-deps api pytest
+      - run: docker compose up -d --wait
+      - run: curl --fail http://localhost:8000/health/ready
+      - if: always()
+        run: docker compose logs && docker compose down

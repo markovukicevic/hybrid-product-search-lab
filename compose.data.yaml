@@ -1,0 +1,6 @@
+services:
+  api:
+    image: productsearch-data:latest
+    build:
+      args:
+        INSTALL_DATA: "true"
